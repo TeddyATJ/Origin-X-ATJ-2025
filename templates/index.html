@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Origin X ATJ 2025</title>
+
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        h1 { margin-bottom: 20px; }
+        .search-container { margin-bottom: 10px; }
+        input[type="text"] { padding: 8px; width: 250px; }
+        button { padding: 8px 12px; margin-left: 5px; cursor: pointer; }
+        table { width: 90%; margin: auto; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .hidden { display: none; position: absolute; background: white; border: 1px solid #ddd; width: 250px; max-height: 150px; overflow-y: auto; }
+        .hidden div { padding: 8px; cursor: pointer; }
+        .hidden div:hover { background: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+    <h1>Origin X ATJ 2025</h1>
+
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search...">
+        <button onclick="performSearch()">Search</button>
+        <div id="search-results" class="hidden"></div>
+    </div>
+
+    <table id="schedule">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Item</th>
+                <th>Reporting Time</th>
+                <th>Performance Time</th>
+                <th>Pick Up Time</th>
+                <th>Hair</th>
+                <th>Make Up</th>
+                <th>Legwear</th>
+                <th>Footwear</th>
+                <th>Award</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        let data = [];
+
+        // Fetch Data from Flask Backend
+        function fetchData() {
+            console.log("📡 Fetching data from /data...");
+
+            $.getJSON('/data')
+            .done(function(response) {
+                console.log("✅ Data received:", response);
+                data = response;
+                displayTable(data);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.error("❌ Error fetching data:", textStatus, errorThrown);
+                console.error("Server response:", jqXHR.responseText);
+                alert("Error loading data. Check console for details.");
+            });
+        }
+
+        // Display Data in Table
+        function displayTable(data) {
+            let tbody = $("#schedule tbody");
+            tbody.empty();
+
+            if (data.length === 0) {
+                console.warn("No data to display.");
+            }
+
+            data.forEach((row, index) => {
+                console.log(`Row ${index + 1}:`, row); // Debugging log for each row
+
+                let makeUpValue = row['Make up'] ? row['Make up'].trim() : "";
+                console.log(`Make Up Value (Row ${index + 1}):`, makeUpValue); // Log make up column
+
+                let makeUpLink = (makeUpValue.startsWith("http")) 
+                    ? `<a href="${makeUpValue}" target="_blank">Watch Video</a>` 
+                    : makeUpValue;
+
+                let rowHTML = `
+                    <tr>
+                        <td>${row.Date || ""}</td>
+                        <td>${row.Name || ""}</td>
+                        <td>${row.Category || ""}</td>
+                        <td>${row.Item || ""}</td>
+                        <td>${row['Reporting Time'] || ""}</td>
+                        <td>${row['Performance Time'] || ""}</td>
+                        <td>${row['Pick Up Time'] || ""}</td>
+                        <td>${row.Hair || ""}</td>
+                        <td>${makeUpLink}</td>
+                        <td>${row.Legwear || ""}</td>
+                        <td>${row.Footwear || ""}</td>
+                        <td>${row.Award || ""}</td>
+                    </tr>
+                `;
+                tbody.append(rowHTML);
+            });
+
+            console.log("Rows inserted into table:", $("#schedule tbody tr").length);
+        }
+
+        // Live Search Functionality
+        $("#search").on("input", function() {
+            let query = $(this).val().toLowerCase();
+            let results = data.filter(row => 
+                Object.values(row).some(value => value.toLowerCase().includes(query))
+            );
+            displayTable(results);
+        });
+
+        // Hide search results when clicking outside
+        $(document).click(function(event) {
+            if (!$(event.target).closest(".search-container").length) {
+                $("#search-results").hide();
+            }
+        });
+
+        // Perform search when search button is clicked
+        function performSearch() {
+            let query = $("#search").val().toLowerCase();
+            let results = data.filter(row => 
+                Object.values(row).some(value => value.toLowerCase().includes(query))
+            );
+            displayTable(results);
+        }
+
+        fetchData(); // Load Data on Page Load
+    </script>
+
+</body>
+</html>
+
