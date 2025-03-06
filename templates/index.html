@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Viewer</title>
-    
+
     <!-- ✅ Favicon Fix -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
@@ -59,7 +59,7 @@
     <script>
         $(document).ready(function() {
             console.log("📡 Fetching data from /data...");
-            
+
             $.getJSON("/data", function(data) {
                 console.log("✅ Data received:", data);
 
@@ -75,25 +75,30 @@
 
                 data.forEach(function(row) {
                     var newRow = "<tr>";
-                    newRow += "<td>" + (row.Award || "N/A") + "</td>";
-                    newRow += "<td>" + (row.Category || "N/A") + "</td>";
-                    newRow += "<td>" + (row.Date || "N/A") + "</td>";
-                    newRow += "<td>" + (row.Footwear || "N/A") + "</td>";
-                    newRow += "<td>" + (row.Hair || "N/A") + "</td>";
-                    newRow += "<td>" + (row.Item || "N/A") + "</td>";
-                    newRow += "<td>" + (row.Legwear || "N/A") + "</td>";
+
+                    function sanitize(value) {
+                        return value && value !== "NaN" ? value : "N/A";
+                    }
+
+                    newRow += "<td>" + sanitize(row.Award) + "</td>";
+                    newRow += "<td>" + sanitize(row.Category) + "</td>";
+                    newRow += "<td>" + sanitize(row.Date) + "</td>";
+                    newRow += "<td>" + sanitize(row.Footwear) + "</td>";
+                    newRow += "<td>" + sanitize(row.Hair) + "</td>";
+                    newRow += "<td>" + sanitize(row.Item) + "</td>";
+                    newRow += "<td>" + sanitize(row.Legwear) + "</td>";
 
                     // Make "Makeup" a clickable link if it contains a URL
                     if (row["Make up"] && row["Make up"].startsWith("http")) {
                         newRow += '<td><a href="' + row["Make up"] + '" target="_blank">Makeup Link</a></td>';
                     } else {
-                        newRow += "<td>" + (row["Make up"] || "N/A") + "</td>";
+                        newRow += "<td>" + sanitize(row["Make up"]) + "</td>";
                     }
 
-                    newRow += "<td>" + (row.Name || "N/A") + "</td>";
-                    newRow += "<td>" + (row["Performance Time"] || "N/A") + "</td>";
-                    newRow += "<td>" + (row["Pick Up Time"] || "N/A") + "</td>";
-                    newRow += "<td>" + (row["Reporting Time"] || "N/A") + "</td>";
+                    newRow += "<td>" + sanitize(row.Name) + "</td>";
+                    newRow += "<td>" + sanitize(row["Performance Time"]) + "</td>";
+                    newRow += "<td>" + sanitize(row["Pick Up Time"]) + "</td>";
+                    newRow += "<td>" + sanitize(row["Reporting Time"]) + "</td>";
                     newRow += "</tr>";
 
                     tableBody.append(newRow);
