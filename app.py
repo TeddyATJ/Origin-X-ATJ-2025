@@ -25,7 +25,7 @@ def data():
 def home():
     return render_template("index.html")
 
-# 🔴 Render Port Fix: Allow Render to bind to the correct port
+port = os.environ.get("PORT", 5000)  # Default to 5000 if not set
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # Get PORT from Render or default to 5000
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=int(port))  # Ensure it binds to 0.0.0.0
