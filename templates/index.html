@@ -96,12 +96,41 @@
                 var tableBody = $("#data-table tbody");
                 tableBody.empty(); // Clear existing data
 
+                function sanitize(value) {
+                    return value && value !== "NaN" ? value : "N/A";
+                }
+
+                // ✅ Convert Date and Time to sortable format
+                function parseDate(dateStr) {
+                    var parts = dateStr.split("/");
+                    return new Date(parts[2], parts[1] - 1, parts[0]); // Format: DD/MM/YYYY
+                }
+
+                function parseTime(timeStr) {
+                    if (!timeStr || timeStr === "N/A") return 0;
+                    var match = timeStr.match(/(\d+):(\d+) (am|pm)/i);
+                    if (!match) return 0;
+                    var hours = parseInt(match[1]);
+                    var minutes = parseInt(match[2]);
+                    if (match[3].toLowerCase() === "pm" && hours !== 12) hours += 12;
+                    if (match[3].toLowerCase() === "am" && hours === 12) hours = 0;
+                    return hours * 60 + minutes; // Convert to minutes since midnight
+                }
+
+                // ✅ Sort Data by Date and Performance Time
+                data.sort((a, b) => {
+                    var dateA = parseDate(sanitize(a.Date));
+                    var dateB = parseDate(sanitize(b.Date));
+                    var timeA = parseTime(sanitize(a["Performance Time"]));
+                    var timeB = parseTime(sanitize(b["Performance Time"]));
+
+                    if (dateA - dateB !== 0) return dateA - dateB; // Sort by Date first
+                    return timeA - timeB; // Then by Performance Time
+                });
+
+                // ✅ Append Sorted Data to Table
                 data.forEach(function(row) {
                     var newRow = "<tr>";
-
-                    function sanitize(value) {
-                        return value && value !== "NaN" ? value : "N/A";
-                    }
 
                     newRow += "<td>" + sanitize(row.Date) + "</td>";
                     newRow += "<td>" + sanitize(row.Name) + "</td>";
@@ -156,3 +185,4 @@
 
 </body>
 </html>
+
