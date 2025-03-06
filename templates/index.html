@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Viewer</title>
+    <title>Origin X ATJ 2025</title>
 
     <!-- ✅ Favicon Fix -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -14,10 +14,24 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        #search-bar {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 8px;
+            width: 250px;
+            font-size: 16px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
         }
         th, td {
             border: 1px solid #ddd;
@@ -27,28 +41,37 @@
         th {
             background-color: #f2f2f2;
         }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Data Viewer</h1>
+    <!-- ✅ Restored Page Title -->
+    <h1>Origin X ATJ 2025</h1>
+
+    <!-- ✅ Search Bar (Now Searches All Columns) -->
+    <input type="text" id="search-bar" placeholder="Search..." onkeyup="searchTable()">
+
     <p>Fetching data from Google Sheets...</p>
 
+    <!-- ✅ Updated Table with Correct Column Order -->
     <table id="data-table">
         <thead>
             <tr>
-                <th>Award</th>
-                <th>Category</th>
                 <th>Date</th>
-                <th>Footwear</th>
-                <th>Hair</th>
-                <th>Item</th>
-                <th>Legwear</th>
-                <th>Makeup</th>
                 <th>Name</th>
+                <th>Category</th>
+                <th>Item</th>
+                <th>Reporting Time</th>
                 <th>Performance Time</th>
                 <th>Pick Up Time</th>
-                <th>Reporting Time</th>
+                <th>Hair</th>
+                <th>Make up</th>
+                <th>Legwear</th>
+                <th>Footwear</th>
+                <th>Award</th>
             </tr>
         </thead>
         <tbody>
@@ -80,13 +103,14 @@
                         return value && value !== "NaN" ? value : "N/A";
                     }
 
-                    newRow += "<td>" + sanitize(row.Award) + "</td>";
-                    newRow += "<td>" + sanitize(row.Category) + "</td>";
                     newRow += "<td>" + sanitize(row.Date) + "</td>";
-                    newRow += "<td>" + sanitize(row.Footwear) + "</td>";
-                    newRow += "<td>" + sanitize(row.Hair) + "</td>";
+                    newRow += "<td>" + sanitize(row.Name) + "</td>";
+                    newRow += "<td>" + sanitize(row.Category) + "</td>";
                     newRow += "<td>" + sanitize(row.Item) + "</td>";
-                    newRow += "<td>" + sanitize(row.Legwear) + "</td>";
+                    newRow += "<td>" + sanitize(row["Reporting Time"]) + "</td>";
+                    newRow += "<td>" + sanitize(row["Performance Time"]) + "</td>";
+                    newRow += "<td>" + sanitize(row["Pick Up Time"]) + "</td>";
+                    newRow += "<td>" + sanitize(row.Hair) + "</td>";
 
                     // Make "Makeup" a clickable link if it contains a URL
                     if (row["Make up"] && row["Make up"].startsWith("http")) {
@@ -95,10 +119,9 @@
                         newRow += "<td>" + sanitize(row["Make up"]) + "</td>";
                     }
 
-                    newRow += "<td>" + sanitize(row.Name) + "</td>";
-                    newRow += "<td>" + sanitize(row["Performance Time"]) + "</td>";
-                    newRow += "<td>" + sanitize(row["Pick Up Time"]) + "</td>";
-                    newRow += "<td>" + sanitize(row["Reporting Time"]) + "</td>";
+                    newRow += "<td>" + sanitize(row.Legwear) + "</td>";
+                    newRow += "<td>" + sanitize(row.Footwear) + "</td>";
+                    newRow += "<td>" + sanitize(row.Award) + "</td>";
                     newRow += "</tr>";
 
                     tableBody.append(newRow);
@@ -109,6 +132,26 @@
                 alert("Failed to load data. Please try again later.");
             });
         });
+
+        // ✅ Search Function (Now Filters Any Column)
+        function searchTable() {
+            var input = document.getElementById("search-bar").value.toLowerCase();
+            var rows = document.querySelectorAll("#data-table tbody tr");
+
+            rows.forEach(function(row) {
+                var cells = row.getElementsByTagName("td");
+                var match = false;
+
+                for (var i = 0; i < cells.length; i++) {
+                    if (cells[i].textContent.toLowerCase().includes(input)) {
+                        match = true;
+                        break;
+                    }
+                }
+
+                row.style.display = match ? "" : "none";
+            });
+        }
     </script>
 
 </body>
