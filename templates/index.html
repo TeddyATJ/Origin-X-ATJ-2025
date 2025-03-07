@@ -141,9 +141,9 @@
                     newRow += "<td>" + sanitize(row["Pick Up Time"]) + "</td>";
                     newRow += "<td>" + sanitize(row.Hair) + "</td>";
 
-                    // Make "Makeup" a clickable link if it contains a URL
+                    // ✅ FIXED: "Make up" Column Now Shows "ATJ Stage Make-Up"
                     if (row["Make up"] && row["Make up"].startsWith("http")) {
-                        newRow += '<td><a href="' + row["Make up"] + '" target="_blank">Makeup Link</a></td>';
+                        newRow += '<td><a href="' + row["Make up"] + '" target="_blank">ATJ Stage Make-Up</a></td>';
                     } else {
                         newRow += "<td>" + sanitize(row["Make up"]) + "</td>";
                     }
