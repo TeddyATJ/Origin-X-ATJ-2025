@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Origin X ATJ 2025</title>
 
-    <!-- ✅ Favicon Fix -->
+    <!-- ✅ Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-    <!-- ✅ jQuery for fetching data -->
+    <!-- ✅ jQuery for data fetching -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
@@ -48,7 +48,7 @@
 </head>
 <body>
 
-    <!-- ✅ Restored Page Title -->
+    <!-- ✅ Page Title -->
     <h1>Origin X ATJ 2025</h1>
 
     <!-- ✅ Search Bar (Now Searches All Columns) -->
@@ -56,21 +56,15 @@
 
     <p>Fetching data from Google Sheets...</p>
 
-    <!-- ✅ Updated Table with Correct Column Order -->
+    <!-- ✅ Updated Table with Only Required Columns -->
     <table id="data-table">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Name</th>
-                <th>Category</th>
                 <th>Item</th>
-                <th>Reporting Time</th>
-                <th>Performance Time</th>
-                <th>Pick Up Time</th>
-                <th>Hair</th>
-                <th>Make up</th>
-                <th>Legwear</th>
-                <th>Footwear</th>
+                <th>Category</th>
+                <th>Judges Comments</th>
                 <th>Award</th>
             </tr>
         </thead>
@@ -102,8 +96,16 @@
 
                 // ✅ Convert Date and Time to sortable format
                 function parseDate(dateStr) {
-                    var parts = dateStr.split("/");
-                    return new Date(parts[2], parts[1] - 1, parts[0]); // Format: DD/MM/YYYY
+                    var parts = dateStr.split(" ");
+                    var day = parseInt(parts[1]);
+                    var month = parts[2];
+                    var year = parseInt(parts[3]);
+
+                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    var monthIndex = monthNames.indexOf(month);
+                    if (monthIndex === -1) return new Date(9999, 0, 1); // If invalid, push to end
+
+                    return new Date(year, monthIndex, day);
                 }
 
                 function parseTime(timeStr) {
@@ -134,22 +136,16 @@
 
                     newRow += "<td>" + sanitize(row.Date) + "</td>";
                     newRow += "<td>" + sanitize(row.Name) + "</td>";
-                    newRow += "<td>" + sanitize(row.Category) + "</td>";
                     newRow += "<td>" + sanitize(row.Item) + "</td>";
-                    newRow += "<td>" + sanitize(row["Reporting Time"]) + "</td>";
-                    newRow += "<td>" + sanitize(row["Performance Time"]) + "</td>";
-                    newRow += "<td>" + sanitize(row["Pick Up Time"]) + "</td>";
-                    newRow += "<td>" + sanitize(row.Hair) + "</td>";
+                    newRow += "<td>" + sanitize(row.Category) + "</td>";
 
-                    // ✅ FIXED: "Make up" Column Now Shows "ATJ Stage Make-Up"
-                    if (row["Make up"] && row["Make up"].startsWith("http")) {
-                        newRow += '<td><a href="' + row["Make up"] + '" target="_blank">ATJ Stage Make-Up</a></td>';
+                    // ✅ FIXED: "Judges Comments" Now Shows "Link to Comment" for URLs
+                    if (row["Judges Comments"] && row["Judges Comments"].startsWith("http")) {
+                        newRow += '<td><a href="' + row["Judges Comments"] + '" target="_blank">Link to Comment</a></td>';
                     } else {
-                        newRow += "<td>" + sanitize(row["Make up"]) + "</td>";
+                        newRow += "<td>" + sanitize(row["Judges Comments"]) + "</td>";
                     }
 
-                    newRow += "<td>" + sanitize(row.Legwear) + "</td>";
-                    newRow += "<td>" + sanitize(row.Footwear) + "</td>";
                     newRow += "<td>" + sanitize(row.Award) + "</td>";
                     newRow += "</tr>";
 
@@ -185,4 +181,3 @@
 
 </body>
 </html>
-
