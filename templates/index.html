@@ -11,14 +11,23 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
     }
     h1 {
       margin-bottom: 0;
     }
     h3 {
-      margin-top: 0;
+      margin-top: 5px;
       font-weight: normal;
       font-size: 1rem;
+    }
+    input#searchInput {
+      width: 60%;
+      padding: 10px;
+      margin: 20px 0;
+      text-align: center;
     }
     table {
       width: 100%;
@@ -28,7 +37,7 @@
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
-      text-align: left;
+      text-align: center;
       vertical-align: top;
     }
     th {
@@ -43,11 +52,12 @@
 
   <h1>UDO-APAC X ATJ 2025</h1>
   <h3>LOCATION:<br>
-  UDO Asia-Pacific X ATJ<br>
-  Central Si Racha, Chonburi, Thailand<br>
-  8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand</h3>
+    UDO Asia-Pacific X ATJ<br>
+    Central Si Racha, Chonburi, Thailand<br>
+    8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand
+  </h3>
 
-  <input type="text" id="searchInput" placeholder="Search..." style="width: 100%; padding: 10px; margin-bottom: 20px;" />
+  <input type="text" id="searchInput" placeholder="Search..." />
 
   <table id="data-table">
     <thead>
@@ -119,5 +129,6 @@
       });
     });
   </script>
+
 </body>
 </html>
