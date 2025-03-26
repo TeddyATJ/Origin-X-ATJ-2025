@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UDO-APAC X ATJ 2025</title>
 
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -11,14 +11,14 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
     }
     h1 {
       margin-bottom: 0;
     }
     h3 {
-      margin-top: 5px;
-      color: #444;
+      margin-top: 0;
+      font-weight: normal;
+      font-size: 1rem;
     }
     table {
       width: 100%;
@@ -26,33 +26,28 @@
       margin-top: 20px;
     }
     th, td {
-      border: 1px solid #ccc;
+      border: 1px solid #ddd;
       padding: 8px;
       text-align: left;
       vertical-align: top;
     }
     th {
-      background-color: #f0f0f0;
+      background-color: #f2f2f2;
     }
-    input[type="text"] {
-      margin-top: 20px;
-      padding: 8px;
-      width: 100%;
-      font-size: 16px;
+    .bold {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
   <h1>UDO-APAC X ATJ 2025</h1>
-  <h3>
-    LOCATION:<br>
-    UDO Asia-Pacific X ATJ<br>
-    Central Si Racha, Chonburi, Thailand<br>
-    8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand
-  </h3>
+  <h3>LOCATION:<br>
+  UDO Asia-Pacific X ATJ<br>
+  Central Si Racha, Chonburi, Thailand<br>
+  8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand</h3>
 
-  <input type="text" id="searchInput" placeholder="Search anything...">
+  <input type="text" id="searchInput" placeholder="Search..." style="width: 100%; padding: 10px; margin-bottom: 20px;" />
 
   <table id="data-table">
     <thead>
@@ -78,34 +73,48 @@
 
   <script>
     $(document).ready(function () {
-      $.getJSON("/data", function (data) {
-        const tableBody = $("#data-table tbody");
-        tableBody.empty();
+      function normalize(str) {
+        return (str || "").toLowerCase().trim();
+      }
+
+      function renderTable(data) {
+        const tbody = $("#data-table tbody");
+        tbody.empty();
 
         data.forEach(row => {
-          const newRow = $("<tr>");
-          newRow.append(`<td>${row["Day & Date"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Name"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Category"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Item"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Zone"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Reporting Time"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Event Time"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Dismissal Time"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Hair"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Makeup"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Costume"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Footwear"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Notes"] || "N/A"}</td>`);
-          newRow.append(`<td>${row["Results"] || "N/A"}</td>`);
-          tableBody.append(newRow);
+          const tr = $("<tr>");
+          tr.append(`<td class="bold">${row["Day & Date"] || "N/A"}</td>`);
+          tr.append(`<td>${row.Name || "N/A"}</td>`);
+          tr.append(`<td>${row.Category || "N/A"}</td>`);
+          tr.append(`<td class="bold">${row.Item || "N/A"}</td>`);
+          tr.append(`<td>${row.Zone || "N/A"}</td>`);
+          tr.append(`<td class="bold">${row["Reporting Time"] || "N/A"}</td>`);
+          tr.append(`<td>${row["Event Time"] || "N/A"}</td>`);
+          tr.append(`<td>${row["Dismissal Time"] || "N/A"}</td>`);
+          tr.append(`<td>${row.Hair || "N/A"}</td>`);
+          tr.append(`<td>${row.Makeup || "N/A"}</td>`);
+          tr.append(`<td>${row.Costume || "N/A"}</td>`);
+          tr.append(`<td>${row.Footwear || "N/A"}</td>`);
+          tr.append(`<td>${row.Notes || "N/A"}</td>`);
+          tr.append(`<td>${row.Results || "N/A"}</td>`);
+          tbody.append(tr);
         });
-      });
+      }
 
-      $("#searchInput").on("keyup", function () {
-        const value = $(this).val().toLowerCase();
-        $("#data-table tbody tr").filter(function () {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      function filterTable(data, query) {
+        return data.filter(row => {
+          return Object.values(row).some(val => normalize(val).includes(query));
+        });
+      }
+
+      $.getJSON("/data", function (data) {
+        let fullData = data;
+        renderTable(fullData);
+
+        $("#searchInput").on("input", function () {
+          const query = normalize($(this).val());
+          const filtered = filterTable(fullData, query);
+          renderTable(filtered);
         });
       });
     });
