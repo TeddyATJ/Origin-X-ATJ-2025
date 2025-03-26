@@ -1,134 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UDO-APAC X ATJ 2025</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UDO-APAC X ATJ 2025</title>
 
-    <!-- Favicon Fix -->
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- jQuery for fetching data -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            margin-bottom: 0;
-        }
-        h2 {
-            margin-top: 5px;
-            font-weight: normal;
-            font-size: 1rem;
-            color: #555;
-        }
-        input[type="text"] {
-            padding: 8px;
-            width: 100%;
-            margin: 20px 0;
-            font-size: 1rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 6px;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr.hidden {
-            display: none;
-        }
-    </style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 0;
+    }
+    h3 {
+      margin-top: 5px;
+      color: #444;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    input[type="text"] {
+      margin-top: 20px;
+      padding: 8px;
+      width: 100%;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>UDO-APAC X ATJ 2025</h1>
-    <h2>LOCATION:<br>
-        UDO Asia-Pacific X ATJ<br>
-        Central Si Racha, Chonburi, Thailand<br>
-        8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand
-    </h2>
+  <h1>UDO-APAC X ATJ 2025</h1>
+  <h3>
+    LOCATION:<br>
+    UDO Asia-Pacific X ATJ<br>
+    Central Si Racha, Chonburi, Thailand<br>
+    8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand
+  </h3>
 
-    <input type="text" id="searchInput" placeholder="Search anything...">
+  <input type="text" id="searchInput" placeholder="Search anything...">
 
-    <table id="data-table">
-        <thead>
-            <tr>
-                <th>Day & Date</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Item</th>
-                <th>Zone</th>
-                <th>Reporting Time</th>
-                <th>Event Time</th>
-                <th>Dismissal Time</th>
-                <th>Hair</th>
-                <th>Makeup</th>
-                <th>Costume</th>
-                <th>Footwear</th>
-                <th>Notes</th>
-                <th>Results</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be populated here -->
-        </tbody>
-    </table>
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th>Day & Date</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Item</th>
+        <th>Zone</th>
+        <th>Reporting Time</th>
+        <th>Event Time</th>
+        <th>Dismissal Time</th>
+        <th>Hair</th>
+        <th>Makeup</th>
+        <th>Costume</th>
+        <th>Footwear</th>
+        <th>Notes</th>
+        <th>Results</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-    <script>
-        $(document).ready(function () {
-            console.log("📡 Fetching data from /data...");
-            $.getJSON("/data", function (data) {
-                console.log("✅ Data received:", data);
-                var tableBody = $("#data-table tbody");
-                tableBody.empty();
+  <script>
+    $(document).ready(function () {
+      $.getJSON("/data", function (data) {
+        const tableBody = $("#data-table tbody");
+        tableBody.empty();
 
-                data.forEach(function (row) {
-                    let newRow = "<tr>";
-                    newRow += `<td>${row["Day & Date"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Name"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Category"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Item"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Zone"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Reporting Time"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Event Time"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Dismissal Time"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Hair"] || "N/A"}</td>`;
-
-                    // Check for Makeup URL
-                    if (row["Makeup"] && row["Makeup"].startsWith("http")) {
-                        newRow += `<td><a href="${row["Makeup"]}" target="_blank">ATJ Stage Make-Up</a></td>`;
-                    } else {
-                        newRow += `<td>${row["Makeup"] || "N/A"}</td>`;
-                    }
-
-                    newRow += `<td>${row["Costume"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Footwear"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Notes"] || "N/A"}</td>`;
-                    newRow += `<td>${row["Results"] || "N/A"}</td>`;
-                    newRow += "</tr>";
-                    tableBody.append(newRow);
-                });
-            });
-
-            // Search filter
-            $("#searchInput").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#data-table tbody tr").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
-            });
+        data.forEach(row => {
+          const newRow = $("<tr>");
+          newRow.append(`<td>${row["Day & Date"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Name"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Category"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Item"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Zone"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Reporting Time"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Event Time"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Dismissal Time"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Hair"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Makeup"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Costume"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Footwear"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Notes"] || "N/A"}</td>`);
+          newRow.append(`<td>${row["Results"] || "N/A"}</td>`);
+          tableBody.append(newRow);
         });
-    </script>
+      });
+
+      $("#searchInput").on("keyup", function () {
+        const value = $(this).val().toLowerCase();
+        $("#data-table tbody tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
