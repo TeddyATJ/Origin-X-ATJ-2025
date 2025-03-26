@@ -2,58 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>UDO-APAC X ATJ 2025</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Favicon (Optional) -->
+    <title>UDO-APAC X ATJ 2025</title>
+
+    <!-- Favicon Fix -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    
-    <!-- jQuery -->
+
+    <!-- jQuery for fetching data -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 2rem;
+            margin: 20px;
         }
         h1 {
-            font-size: 2rem;
+            margin-bottom: 0;
         }
-        h3 {
+        h2 {
+            margin-top: 5px;
             font-weight: normal;
-            margin-top: -0.5rem;
-            margin-bottom: 2rem;
+            font-size: 1rem;
+            color: #555;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 1rem;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
+            margin-top: 10px;
         }
         th, td {
             border: 1px solid #ddd;
             padding: 6px;
+            text-align: left;
+            font-size: 0.9rem;
         }
         th {
-            background-color: #f0f0f0;
+            background-color: #f2f2f2;
+        }
+        tr.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 
     <h1>UDO-APAC X ATJ 2025</h1>
-    <h3>LOCATION:<br>
-    UDO Asia-Pacific X ATJ<br>
-    Central Si Racha, Chonburi, Thailand<br>
-    8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand
-    </h3>
+    <h2>LOCATION:<br>
+        UDO Asia-Pacific X ATJ<br>
+        Central Si Racha, Chonburi, Thailand<br>
+        8 8/1 Sukhumvit Rd, Si Racha District, Chon Buri 20110, Thailand
+    </h2>
 
-    <input type="text" id="search-input" placeholder="Search anything..." style="width: 100%; padding: 8px;">
+    <input type="text" id="searchInput" placeholder="Search anything...">
 
     <table id="data-table">
         <thead>
             <tr>
-                <th>Day</th>
-                <th>Date</th>
+                <th>Day & Date</th>
                 <th>Name</th>
                 <th>Category</th>
                 <th>Item</th>
@@ -69,58 +80,53 @@
                 <th>Results</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+            <!-- Data will be populated here -->
+        </tbody>
     </table>
 
     <script>
-        function isValidUrl(str) {
-            try {
-                new URL(str);
-                return true;
-            } catch (_) {
-                return false;
-            }
-        }
+        $(document).ready(function () {
+            console.log("📡 Fetching data from /data...");
+            $.getJSON("/data", function (data) {
+                console.log("✅ Data received:", data);
+                var tableBody = $("#data-table tbody");
+                tableBody.empty();
 
-        function renderRow(row) {
-            let html = "<tr>";
-            ["Day","Date","Name","Category","Item","Zone","Reporting Time","Event Time","Dismissal Time","Hair","Makeup","Costume","Footwear","Notes","Results"].forEach(col => {
-                let value = row[col] || "N/A";
-                if (col === "Makeup" && isValidUrl(value)) {
-                    value = `<a href="${value}" target="_blank">ATJ Stage Make-Up</a>`;
-                }
-                html += `<td>${value}</td>`;
-            });
-            html += "</tr>";
-            return html;
-        }
+                data.forEach(function (row) {
+                    let newRow = "<tr>";
+                    newRow += `<td>${row["Day & Date"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Name"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Category"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Item"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Zone"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Reporting Time"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Event Time"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Dismissal Time"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Hair"] || "N/A"}</td>`;
 
-        function filterRows(keyword) {
-            $("#data-table tbody tr").each(function() {
-                const rowText = $(this).text().toLowerCase();
-                $(this).toggle(rowText.includes(keyword.toLowerCase()));
-            });
-        }
+                    // Check for Makeup URL
+                    if (row["Makeup"] && row["Makeup"].startsWith("http")) {
+                        newRow += `<td><a href="${row["Makeup"]}" target="_blank">ATJ Stage Make-Up</a></td>`;
+                    } else {
+                        newRow += `<td>${row["Makeup"] || "N/A"}</td>`;
+                    }
 
-        $(document).ready(function() {
-            $.getJSON("/data", function(data) {
-                const tbody = $("#data-table tbody");
-                tbody.empty();
-
-                // Auto-sort by Date and Event Time (if possible)
-                data.sort((a, b) => {
-                    const dateA = new Date(`${a.Date} ${a["Event Time"] || ""}`);
-                    const dateB = new Date(`${b.Date} ${b["Event Time"] || ""}`);
-                    return dateA - dateB;
-                });
-
-                data.forEach(row => {
-                    tbody.append(renderRow(row));
+                    newRow += `<td>${row["Costume"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Footwear"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Notes"] || "N/A"}</td>`;
+                    newRow += `<td>${row["Results"] || "N/A"}</td>`;
+                    newRow += "</tr>";
+                    tableBody.append(newRow);
                 });
             });
 
-            $("#search-input").on("input", function() {
-                filterRows($(this).val());
+            // Search filter
+            $("#searchInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#data-table tbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
             });
         });
     </script>
