@@ -6,7 +6,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Google Sheets CSV URL
-GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQAMN08MkDCY1zHy7Whm7vRpJ5KC8z_0pxJuCcTcWawX-npveykePHMtgWN1UDQ45J-8IM9gFcHiD3E/pub?output=csv"
+GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS97F-RhIzQXQHFgdK_o0xjjpfFFQrjDfcR1IoB7rywufmIlg96oYYrhtjKXE6Vz0_VyRbxkfRAPksF/pub?output=csv"
 
 # Function to fetch data from Google Sheets and handle NaN values
 def get_data():
